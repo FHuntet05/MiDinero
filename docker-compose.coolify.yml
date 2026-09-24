@@ -19,8 +19,9 @@ services:
       - SYSTEM_DEMO_DISABLED=true
       - APPLICATION_HOST=0.0.0.0
       - APPLICATION_PORT=8081
-      - BETTER_AUTH_URL=${APP_URL:-https://dinero.fhestrenos.com}
-      - AUTH_ORIGIN=${APP_URL:-https://dinero.fhestrenos.com}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL:-https://dinero.fhestrenos.com}
+      - AUTH_ORIGIN=${AUTH_ORIGIN:-https://dinero.fhestrenos.com}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://dinero.fhestrenos.com,http://dinero.fhestrenos.com,http://102.129.137.243:3000,http://localhost:3000}
       - APPLICATION_JWT_SECRET=${APPLICATION_JWT_SECRET:-n4mDV54cpLQdjJ3OeR9HqG5wRlTvj7HLwojMZHMCJ1U}
       - APP_SESSION_ID_SECRET=${APP_SESSION_ID_SECRET:-llzUbuVZfb1UT0EWpTem5reL-E4BehcEtzyAdM0bbvo}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-EDuJ8o3_J57VAgB5i0fCvr4ftpeUl3c1I9sQzt50g7M}
