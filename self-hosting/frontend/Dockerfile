@@ -52,8 +52,9 @@ COPY packages/frontend ./packages/frontend
 COPY packages/landing ./packages/landing
 
 # Build frontend SPA
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 WORKDIR /app/packages/frontend
-RUN npm run build
+RUN npx vite build
 
 # Build Astro landing
 WORKDIR /app/packages/landing
