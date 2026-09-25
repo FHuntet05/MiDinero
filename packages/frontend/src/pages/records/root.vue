@@ -11,8 +11,8 @@
         // container leaves every virtual row mounted, so the infinite-scroll
         // sentinel is permanently on screen and fetch-next-page loops to the end.
         useUnboundedPageHeight
-          ? 'min-h-[calc(100dvh-var(--header-height)-32px)]'
-          : 'h-[calc(100dvh-var(--header-height)-32px)] min-h-0',
+          ? 'min-h-[calc(100dvh-var(--header-height)-var(--bottom-navbar-height,0px)-32px)]'
+          : 'h-[calc(100dvh-var(--header-height)-var(--bottom-navbar-height,0px)-32px)] min-h-0',
       ]"
     >
       <!-- Mobile compact layout: filters behind a dialog button, user toggles

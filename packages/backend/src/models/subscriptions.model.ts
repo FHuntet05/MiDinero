@@ -64,7 +64,7 @@ export default class Subscriptions extends Model {
   declare expectedAmount: Money | null;
 
   @Column({
-    type: DataType.STRING(3),
+    type: DataType.STRING(16),
     allowNull: true,
   })
   expectedCurrencyCode!: string | null;

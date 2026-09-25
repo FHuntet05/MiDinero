@@ -79,7 +79,7 @@ export default class TransactionTemplates extends Model {
   note!: string | null;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(3) })
+  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(16) })
   originalCurrencyCode!: string | null;
 
   declare createdAt: Date;

@@ -22,11 +22,11 @@ export default class UserExchangeRates extends Model {
   userId!: number;
 
   @ForeignKey(() => Currencies.default)
-  @Column({ allowNull: false, type: DataType.STRING(3), primaryKey: true })
+  @Column({ allowNull: false, type: DataType.STRING(16), primaryKey: true })
   baseCode!: string;
 
   @ForeignKey(() => Currencies.default)
-  @Column({ allowNull: false, type: DataType.STRING(3), primaryKey: true })
+  @Column({ allowNull: false, type: DataType.STRING(16), primaryKey: true })
   quoteCode!: string;
 
   @Column({ allowNull: true, defaultValue: 1, type: DataType.NUMBER })

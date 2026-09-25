@@ -251,7 +251,7 @@ export default class Transactions extends Model {
   category!: Categories;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: true, type: DataType.STRING(3) })
+  @Column({ allowNull: true, type: DataType.STRING(16) })
   currencyCode!: string;
 
   @Column({
@@ -262,7 +262,7 @@ export default class Transactions extends Model {
   accountType!: ACCOUNT_TYPES;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(3) })
+  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(16) })
   refCurrencyCode!: string;
 
   @Column({
@@ -306,7 +306,7 @@ export default class Transactions extends Model {
   declare originalAmount: Money | null;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(3) })
+  @Column({ allowNull: true, defaultValue: null, type: DataType.STRING(16) })
   originalCurrencyCode!: string | null;
 
   // Represents if the transaction refunds another tx, or is being refunded by other. Added only for

@@ -22,7 +22,7 @@ export default class UsersCurrencies extends Model {
   userId!: number;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: false, type: DataType.STRING(3) })
+  @Column({ allowNull: false, type: DataType.STRING(16) })
   currencyCode!: string;
 
   @BelongsTo(() => Users, {

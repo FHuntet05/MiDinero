@@ -12,11 +12,11 @@ import Currencies from './currencies.model';
 })
 export default class ExchangeRates extends Model {
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: false, type: DataType.STRING(3), primaryKey: true })
+  @Column({ allowNull: false, type: DataType.STRING(16), primaryKey: true })
   baseCode!: string;
 
   @ForeignKey(() => Currencies)
-  @Column({ allowNull: false, type: DataType.STRING(3), primaryKey: true })
+  @Column({ allowNull: false, type: DataType.STRING(16), primaryKey: true })
   quoteCode!: string;
 
   @Column({ allowNull: false, type: DataType.DATE, primaryKey: true })

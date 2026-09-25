@@ -15,7 +15,7 @@ export default class Currencies extends Model {
   @Column({
     allowNull: false,
     primaryKey: true,
-    type: DataType.STRING(3),
+    type: DataType.STRING(16),
   })
   code!: string;
 

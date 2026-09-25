@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background flex h-screen max-md:flex-col">
+  <div class="bg-background flex h-screen h-[100dvh] max-md:flex-col">
     <template v-if="!isMobileView">
       <SidebarRail v-if="isCollapsed" />
       <Sidebar v-else />
@@ -9,7 +9,7 @@
       <ui-header class="bg-background sticky top-0 z-10" />
 
       <template v-if="isAppInitialized">
-        <div class="max-md:pb-4">
+        <div class="max-md:pb-6">
           <router-view />
         </div>
       </template>

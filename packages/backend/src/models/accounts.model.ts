@@ -100,7 +100,7 @@ export default class Accounts extends Model {
   accountCategory!: ACCOUNT_CATEGORIES;
 
   @ForeignKey(() => Currencies)
-  @Column({ type: DataType.STRING(3) })
+  @Column({ type: DataType.STRING(16) })
   currencyCode!: string;
 
   @ForeignKey(() => Users)

@@ -83,7 +83,7 @@
 
       <div class="ml-auto flex items-center gap-2">
         <DesktopOnlyTooltip :content="$t('header.feedback')" :disabled="!isHeaderBarCompact">
-          <span class="inline-flex">
+          <span class="inline-flex max-sm:hidden">
             <FeedbackDialog>
               <Button
                 variant="secondary"
@@ -105,16 +105,18 @@
           :content="$t('header.support')"
           :disabled="!isHeaderBarCompact"
         >
-          <Button
-            variant="secondary"
-            :size="isHeaderBarCompact ? 'icon' : 'sm'"
-            class="flex items-center gap-1.5"
-            :aria-label="$t('header.support')"
-            @click="openSupport"
-          >
-            <HeartIcon class="text-heart size-4 fill-current" />
-            <span class="hidden @[890px]/header-bar:inline">{{ $t('header.support') }}</span>
-          </Button>
+          <span class="inline-flex max-sm:hidden">
+            <Button
+              variant="secondary"
+              :size="isHeaderBarCompact ? 'icon' : 'sm'"
+              class="flex items-center gap-1.5"
+              :aria-label="$t('header.support')"
+              @click="openSupport"
+            >
+              <HeartIcon class="text-heart size-4 fill-current" />
+              <span class="hidden @[890px]/header-bar:inline">{{ $t('header.support') }}</span>
+            </Button>
+          </span>
         </DesktopOnlyTooltip>
 
         <template v-if="accountsNeedingRelink.length > 0">

@@ -66,15 +66,22 @@ export const decimalMoney = () => z.number().transform((val) => Money.fromDecima
  *   displayCurrencyCode: currencyCode().nullable().optional(),
  * })
  */
+export const CUSTOM_CURRENCY_CODES = ['USDT', 'USDT_BEP20', 'USDT_TRC20', 'MLC'] as const;
+
 export const currencyCode = () =>
   z
     .string()
     .trim()
     .toUpperCase()
-    .length(3)
-    .refine((code) => cc.code(code) !== undefined, {
-      message: 'Invalid currency code. Use an ISO 4217 code, e.g. "USD".',
-    });
+    .min(3)
+    .max(16)
+    .refine(
+      (code) =>
+        (CUSTOM_CURRENCY_CODES as readonly string[]).includes(code) || cc.code(code) !== undefined,
+      {
+        message: 'Invalid currency code. Use an ISO 4217 code (e.g. "USD") or recognized crypto/custom code.',
+      },
+    );
 
 /**
  * Optional comma-separated record IDs for query parameters.

@@ -42,7 +42,7 @@ export default class SubscriptionCandidates extends Model {
   averageAmount!: number;
 
   @Column({
-    type: DataType.STRING(3),
+    type: DataType.STRING(16),
     allowNull: false,
   })
   currencyCode!: string;
