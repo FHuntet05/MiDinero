@@ -1,4 +1,5 @@
 import { QueryInterface, QueryTypes, Transaction } from 'sequelize';
+import { createRealTransactionsViewSql, dropRealTransactionsViewSql } from './utils/real-transactions-view';
 
 /**
  * Widens currency code columns across all tables from VARCHAR(3) to VARCHAR(16)
@@ -10,6 +11,10 @@ module.exports = {
     const t: Transaction = await queryInterface.sequelize.transaction();
 
     try {
+      // 0. Drop dependent views (real_transactions) before altering column types,
+      // as PostgreSQL refuses to alter columns used by a view.
+      await queryInterface.sequelize.query(dropRealTransactionsViewSql, { transaction: t });
+
       // 1. Find and drop all foreign key constraints referencing Currencies(code)
       // so that Currencies.code and child columns can be altered without constraint violations.
       const foreignKeys = (await queryInterface.sequelize.query(
@@ -106,7 +111,10 @@ module.exports = {
         );
       }
 
-      // 4. Seed crypto and custom currencies into Currencies table
+      // 4. Re-create the real_transactions view with the new column definitions
+      await queryInterface.sequelize.query(createRealTransactionsViewSql, { transaction: t });
+
+      // 5. Seed crypto and custom currencies into Currencies table
       const currenciesToSeed = [
         { code: 'USDT_BEP20', currency: 'Tether USD (BEP-20)', digits: 2, number: 9901 },
         { code: 'USDT_TRC20', currency: 'Tether USD (TRC-20)', digits: 2, number: 9902 },
@@ -131,6 +139,7 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface): Promise<void> => {
-    // Cannot cleanly revert column lengths if values > 3 chars exist; leave schema safe.
+    // Cannot cleanly revert column lengths if values > 3 chars exist; ensure view remains valid.
+    await queryInterface.sequelize.query(createRealTransactionsViewSql);
   },
 };
