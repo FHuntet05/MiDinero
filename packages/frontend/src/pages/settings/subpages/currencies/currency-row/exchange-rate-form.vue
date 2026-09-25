@@ -4,7 +4,7 @@
       <input-field
         v-model="form.baseRate"
         class="min-w-0 @[26rem]/currencies:flex-1"
-        :label="`1 ${currency.currency?.code} =`"
+        :label="`1 ${currencyCode} =`"
         :placeholder="$t('settings.currencies.exchangeRate.ratePlaceholder')"
         :disabled="isLiveRateEnabled"
         @focus="onBaseFocus"
@@ -12,7 +12,7 @@
       <input-field
         v-model="form.quoteRate"
         class="min-w-0 @[26rem]/currencies:flex-1"
-        :label="`1 ${currency.quoteCode} =`"
+        :label="`1 ${effectiveQuoteCode} =`"
         :placeholder="$t('settings.currencies.exchangeRate.ratePlaceholder')"
         :disabled="isLiveRateEnabled"
         @focus="onQuoteFocus"
@@ -63,6 +63,7 @@ import { InfoIcon } from '@lucide/vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { useCurrenciesStore } from '@/stores';
 import { CurrencyWithExchangeRate } from '../types';
 
 const calculateRatio = (value: number) => {
@@ -77,6 +78,19 @@ const props = defineProps<{
   currency: CurrencyWithExchangeRate;
   isFormDisabled: boolean;
 }>();
+
+const currenciesStore = useCurrenciesStore();
+
+const currencyCode = computed(() => props.currency.currency?.code ?? props.currency.currencyCode);
+
+const effectiveQuoteCode = computed(() => {
+  return (
+    props.currency.quoteCode ||
+    currenciesStore.baseCurrency?.currencyCode ||
+    currenciesStore.currencies.find((c) => c.isDefaultCurrency)?.currencyCode ||
+    'USD'
+  );
+});
 
 const emit = defineEmits<{
   submit: [];
@@ -103,6 +117,17 @@ const form = reactive({
 const isBaseEditing = ref(false);
 const isQuoteEditing = ref(false);
 const isLiveRateEnabled = ref<boolean>(!props.currency.custom);
+
+watch(
+  () => [props.currency.rate, props.currency.quoteRate, props.currency.custom],
+  ([newRate, newQuoteRate, newCustom]) => {
+    if (!isBaseEditing.value && !isQuoteEditing.value) {
+      form.baseRate = newRate as number;
+      form.quoteRate = newQuoteRate as number;
+      isLiveRateEnabled.value = !newCustom;
+    }
+  },
+);
 
 const isRateChanged = computed(
   () => +props.currency.rate !== +form.baseRate || +props.currency.quoteRate !== +form.quoteRate,
@@ -149,14 +174,17 @@ watch(
 
 const deleteExchangeRates = async () => {
   try {
+    const baseCode = currencyCode.value;
+    const quoteCode = effectiveQuoteCode.value;
+
     const { remeasure } = await deleteCustomRate([
       {
-        baseCode: props.currency.currency!.code,
-        quoteCode: props.currency.quoteCode,
+        baseCode,
+        quoteCode,
       },
       {
-        baseCode: props.currency.quoteCode,
-        quoteCode: props.currency.currency!.code,
+        baseCode: quoteCode,
+        quoteCode: baseCode,
       },
     ]);
 
@@ -177,15 +205,18 @@ const deleteExchangeRates = async () => {
 
 const updateExchangeRates = async () => {
   try {
+    const baseCode = currencyCode.value;
+    const quoteCode = effectiveQuoteCode.value;
+
     const { remeasure } = await editUserCurrenciesExchangeRates([
       {
-        baseCode: props.currency.currency!.code,
-        quoteCode: props.currency.quoteCode,
+        baseCode,
+        quoteCode,
         rate: Number(form.baseRate),
       },
       {
-        baseCode: props.currency.quoteCode,
-        quoteCode: props.currency.currency!.code,
+        baseCode: quoteCode,
+        quoteCode: baseCode,
         rate: Number(form.quoteRate),
       },
     ]);

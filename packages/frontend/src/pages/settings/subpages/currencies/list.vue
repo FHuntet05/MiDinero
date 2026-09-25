@@ -60,24 +60,29 @@ const { data: rates } = useQuery({
 
 const isLoading = computed(() => currencies.value.length === 0);
 
-// Base currency pinned first; every other currency carries the rate pair merged from
-// the exchange-rates query so each row can render both directions.
-const currenciesList = computed<CurrencyWithExchangeRate[]>(() =>
-  currencies.value
+const currenciesList = computed<CurrencyWithExchangeRate[]>(() => {
+  const baseCurrencyCode =
+    currencies.value.find((c) => c.isDefaultCurrency)?.currencyCode ??
+    currenciesStore.baseCurrency?.currencyCode ??
+    'USD';
+
+  return currencies.value
     .map((item) => {
-      const rate = (rates.value ?? []).find((i) => i.baseCode === item.currency?.code);
-      const quoteRate = Number(Number(1 / Number(rate?.rate)).toFixed(4));
+      const itemCode = item.currency?.code ?? item.currencyCode;
+      const rate = (rates.value ?? []).find((i) => i.baseCode === itemCode);
+      const numericRate = rate && Number.isFinite(rate.rate) && rate.rate > 0 ? Number(rate.rate) : 1;
+      const quoteRate = Number((1 / numericRate).toFixed(4));
 
       return {
         ...item,
-        rate: Number(rate?.rate?.toFixed(4)),
+        rate: rate && Number.isFinite(rate.rate) ? Number(rate.rate.toFixed(4)) : 1,
         custom: rate?.custom ?? false,
-        quoteCode: rate?.quoteCode ?? '',
+        quoteCode: rate?.quoteCode || baseCurrencyCode,
         quoteRate,
       };
     })
-    .sort((a, b) => Number(b.isDefaultCurrency) - Number(a.isDefaultCurrency)),
-);
+    .sort((a, b) => Number(b.isDefaultCurrency) - Number(a.isDefaultCurrency));
+});
 
 const hasAddedCurrencies = computed(() => currenciesList.value.some((currency) => !currency.isDefaultCurrency));
 
