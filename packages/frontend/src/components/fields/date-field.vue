@@ -105,7 +105,12 @@ const MIN_DATE = new Date('2000-01-01T00:00:00');
 const isValidDate = (value: unknown): value is Date =>
   value instanceof Date && !isNaN(value.getTime()) && value >= MIN_DATE;
 
-const formatToInput = (value: Date) => format(value, 'yyyy-MM-dd HH:mm');
+const formatToInput = (value: Date) => format(value, "yyyy-MM-dd'T'HH:mm");
+
+const parseInputDate = (str: string): Date => {
+  const normalized = str.includes(' ') ? str.replace(' ', 'T') : str;
+  return new Date(normalized);
+};
 
 const inputValue = ref(props.modelValue ? formatToInput(props.modelValue) : '');
 
@@ -122,8 +127,11 @@ const handleLocalInputUpdate = (event: Event) => {
   inputValue.value = inputVal;
 
   // Only emit the date if it's a valid date string
-  if (inputVal && isValidDate(new Date(inputVal))) {
-    emit('update:modelValue', new Date(inputVal));
+  if (inputVal) {
+    const parsed = parseInputDate(inputVal);
+    if (isValidDate(parsed)) {
+      emit('update:modelValue', parsed);
+    }
   }
   // For invalid intermediate states, don't emit anything
   // This prevents validation errors during typing
@@ -133,12 +141,15 @@ const handleBlur = (event: FocusEvent) => {
   const inputVal = (event.target as HTMLInputElement).value;
 
   // On blur, validate the final input value
-  if (inputVal && isValidDate(new Date(inputVal))) {
-    // Valid date - emit it
-    emit('update:modelValue', new Date(inputVal));
-  } else if (inputVal) {
-    // Invalid date - revert to last valid value
-    inputValue.value = props.modelValue ? formatToInput(props.modelValue) : '';
+  if (inputVal) {
+    const parsed = parseInputDate(inputVal);
+    if (isValidDate(parsed)) {
+      // Valid date - emit it
+      emit('update:modelValue', parsed);
+    } else {
+      // Invalid date - revert to last valid value
+      inputValue.value = props.modelValue ? formatToInput(props.modelValue) : '';
+    }
   }
   // If empty, keep it empty
 };
